@@ -36,14 +36,21 @@ void server::PostRequestHandler::handleRequest( Poco::Net::HTTPServerRequest & r
 
   std::istream& in = request.stream();
   int size = request.getContentLength();
-  char buffer[size + 1];
-  in.read(buffer, size);
-  buffer[size] = '\0';
-  if (in)
-    std::cout << "Size " << size << " " << buffer << std::endl;
-  
+  if (Poco::Net::HTTPMessage::UNKNOWN_CONTENT_LENGTH == size)
+  {
+    std::cout << "UNKNOWN_CONTENT_LENGTH"<<std::endl;
+  }
+  else
+  {
+      char buffer[size + 1];
+      in.read(buffer, size);
+      buffer[size] = '\0';
+      if (in)
+          std::cout << "Size " << size << " " << buffer << std::endl;
+  }
+
   response.setContentType("text/txt");
   response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
   std::ostream& os = response.send();
-  os << buffer << std::endl;
+  os << "buffer" << std::endl;
 }

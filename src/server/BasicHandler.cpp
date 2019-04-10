@@ -21,6 +21,7 @@
 // THE SOFTWARE.
 
 #include <BasicHandler.hpp>
+#include <Poco/Net/HTTPServerRequest.h>
 #include <Poco/Net/HTTPServerResponse.h>
 #include <Poco/Net/HTTPResponse.h>
 #include <Poco/Net/HTTPMessage.h>
@@ -34,6 +35,25 @@ BasicHandler::~BasicHandler() {}
 void BasicHandler::handleRequest(Poco::Net::HTTPServerRequest & request,
                                          Poco::Net::HTTPServerResponse & response) {
   std::cout << "Received Request!" << std::endl;
+
+  std::istream& in = request.stream();
+  int size = request.getContentLength();
+  if (Poco::Net::HTTPMessage::UNKNOWN_CONTENT_LENGTH == size)
+  {
+    std::cout << "UNKNOWN_CONTENT_LENGTH"<<std::endl;
+  }
+  else
+  {
+      std::cout<<request.clientAddress().toString()<<std::endl;
+      std::cout<<request.serverAddress().toString()<<std::endl;
+      std::cout<<request.getURI()<<std::endl;
+
+      char buffer[size + 1];
+      in.read(buffer, size);
+      buffer[size] = '\0';
+      if (in)
+          std::cout << "Size " << size << " " << buffer << std::endl;
+  }
 
   response.setContentType("text/txt");
   response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
